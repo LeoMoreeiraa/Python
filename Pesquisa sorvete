@@ -1,0 +1,32 @@
+#inicialização das variáveis de contagem
+total_homens = 0
+total_mulheres = 0
+mulheres_mais20_bom = 0
+mulheres_mais30_ruim = 0
+homens_pessimo = 0
+
+idade = int(input("Qual é a sua idade?"))
+genero = input("Qual o seu gênero?")
+opiniao = input("Qual a sua opinião sobre o sabor do sorvete? (Bom, Ruim ou Péssimo) ")
+
+#atualizar variáveis
+while continuar == "s":
+  if genero.lower() == "masculino":
+    total_homens+= 1
+  if opiniao.lower() == "péssimo":
+     homens_pessimo+= 1
+  if genero.lower() == "feminino":
+    total_mulheres += 1
+  if idade> 20 and opiniao.lower() == "bom":
+    mulheres_mais20_bom += 1
+  elif idade > 30 and opiniao.lower() == "ruim": mulheres_mais30_ruim += 1
+    
+continuar = str(input("Deseja continuar?(s/n)"))
+  if continuar == "n":
+    break
+    
+print("Total de homens que participaram da pesquisa:", total_homens)
+print("Total de mulheres que participaram da pesquisa:", total_mulheres)
+print("Quantidade de mulheres maiores de 20 anos que indicaram o sorvete como bom:", mulheres_mais20_bom)
+print("Quantidade de mulheres maiores de 30 anos que indicaram o sorvete como ruim:", mulheres_mais30_ruim)
+print("Quantidade de homens que indicaram o produto como péssimo:", homens_pessimo)
