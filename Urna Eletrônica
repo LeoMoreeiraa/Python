@@ -1,0 +1,377 @@
+#cadastrar candidatos
+def cadastrar_candidatos():
+    global candidatos_presidente, candidatos_governador, candidatos_prefeito, votos_por_candidato_prefeito, votos_por_candidato_governador, votos_por_candidato_presidente
+    candidatos_presidente = []
+    candidatos_governador = []
+    candidatos_prefeito = []
+    votos_por_candidato_presidente = {}
+    votos_por_candidato_governador = {}
+    votos_por_candidato_prefeito = {}
+
+    while True:
+        nome = input("Digite o nome do candidato: ")
+        numero = int(input("Digite o número do candidato: "))
+        partido = input("Digite o partido do candidato: ")
+        cargo = input("Digite o cargo que o candidato disputa: ")
+
+        if cargo.lower() == "presidente":
+            candidatos_presidente.append((nome, numero, partido))
+            votos_por_candidato_presidente[numero] = 0
+        elif cargo.lower() == "governador":
+            candidatos_governador.append((nome, numero, partido))
+            votos_por_candidato_governador[numero] = 0
+        elif cargo.lower() == "prefeito":
+            candidatos_prefeito.append((nome, numero, partido))
+            votos_por_candidato_prefeito[numero] = 0
+        else:
+            print("Cargo inválido. Os candidatos devem ser cadastrados como presidente, governador ou prefeito.")
+
+        opcao = input("Deseja cadastrar outro candidato? (S/N): ")
+        if opcao.lower() == "n":
+            break
+
+    return candidatos_presidente, candidatos_governador, candidatos_prefeito, votos_por_candidato_prefeito, votos_por_candidato_governador, votos_por_candidato_presidente
+    
+#cadastro de eleitores
+def cadastrar_eleitores():
+    global eleitores
+    eleitores = []
+
+    while True:
+        nome = input("Digite o nome do eleitor: ")
+        cpf = input("Digite o CPF do eleitor: ")
+
+        eleitores.append({"nome": nome, "cpf": cpf})
+
+        opcao = input("Deseja cadastrar outro eleitor? (S/N): ")
+        if opcao.lower() == "n":
+            break
+
+    return eleitores
+
+
+#votar
+#variaveis prefeito
+total_votos_prefeito = []
+total_votos_validos_prefeito = []
+total_votos_brancos_prefeito = []
+total_votos_nulos_prefeito = []
+#variaveis governador
+total_votos_governador = []
+total_votos_validos_governador = []
+total_votos_brancos_governador = []
+total_votos_nulos_governador = []
+#variaveis presidente
+total_votos_presidente = []
+total_votos_validos_presidente = []
+total_votos_brancos_presidente = []
+total_votos_nulos_presidente = []
+#lista dos eleitores que votaram
+eleitores_votaram = []
+def votar(candidatos_prefeito, candidatos_governador, candidatos_presidente, votos_por_candidato_prefeito, votos_por_candidato_governador, votos_por_candidato_presidente):
+    while True:
+        
+        #verificar se o cpf inserido há na lista de eleitores fornecida anteriormente
+        cpf = input("CPF do Eleitor: ")
+
+        eleitor_encontrado = False
+        for eleitor in eleitores:
+            if eleitor["cpf"] == cpf:
+                #inserir na lista dos eleitores que votaram
+                eleitores_votaram.append({"nome": eleitor})
+                eleitor_encontrado = True
+                break
+            
+        if not eleitor_encontrado:
+            print("Você não está registrado como eleitor. Não é possível votar.")
+            return
+        
+        
+        #Votação para Prefeito
+        print("----- Votação para Prefeito -----")
+        while True:
+            numero = int(input("Digite o número do candidato a prefeito, -1 para voto branco ou -2 para voto nulo: "))
+            
+            if numero == -1:
+                total_votos_prefeito.append(numero)
+                total_votos_brancos_prefeito.append(numero)
+                break
+            elif numero == -2:
+                total_votos_prefeito.append(numero)
+                total_votos_nulos_prefeito.append(numero)
+                break
+            else:
+                candidato_encontrado = False
+                
+                for candidato in candidatos_prefeito:
+                    if candidato[1] == numero:
+                        candidato_encontrado = True
+
+                        #Atualiza o contador de votos para o candidato
+                        if numero in votos_por_candidato_prefeito:
+                            votos_por_candidato_prefeito[numero] += 1
+                        else:
+                            votos_por_candidato_prefeito[numero] = 1
+                            
+                        break
+                
+                if candidato_encontrado:
+                    total_votos_prefeito.append(numero)
+                    total_votos_validos_prefeito.append(numero)
+                    break
+                else:
+                    print("Número de candidato inválido. Digite novamente.")
+                
+        #Votação para Governador
+        print("----- Votação para Governador -----")
+        while True:
+            numero = int(input("Digite o número do candidato a governador, -1 para voto branco ou -2 para voto nulo: "))
+            
+            if numero == -1:
+                total_votos_governador.append(numero)
+                total_votos_brancos_governador.append(numero)
+                break
+            elif numero == -2:
+                total_votos_governador.append(numero)
+                total_votos_nulos_governador.append(numero)
+                break
+            else:
+                candidato_encontrado = False
+                
+                for candidato in candidatos_governador:
+                    if candidato[1] == numero:
+                        candidato_encontrado = True
+
+                        #Atualiza o contador de votos para o candidato
+                        if numero in votos_por_candidato_governador:
+                            votos_por_candidato_governador[numero] += 1
+                        else:
+                            votos_por_candidato_governador[numero] = 1
+                            
+                        break
+                
+                if candidato_encontrado:
+                    total_votos_governador.append(numero)
+                    total_votos_validos_governador.append(numero)
+                    break
+                else:
+                    print("Número de candidato inválido. Digite novamente.")
+                    
+        #Votação para Presidente
+        print("----- Votação para Presidente -----")
+        while True:
+            numero = int(input("Digite o número do candidato a presidente, -1 para voto branco ou -2 para voto nulo: "))
+            
+            if numero == -1:
+                total_votos_presidente.append(numero)
+                total_votos_brancos_presidente.append(numero)
+                break
+            elif numero == -2:
+                total_votos_presidente.append(numero)
+                total_votos_nulos_presidente.append(numero)
+                break
+            else:
+                candidato_encontrado = False
+                
+                for candidato in candidatos_presidente:
+                    if candidato[1] == numero:
+                        candidato_encontrado = True
+
+                        #Atualiza o contador de votos para o candidato
+                        if numero in votos_por_candidato_presidente:
+                            votos_por_candidato_presidente[numero] += 1
+                        else:
+                            votos_por_candidato_presidente[numero] = 1
+                            
+                        break
+                
+                if candidato_encontrado:
+                    total_votos_presidente.append(numero)
+                    total_votos_validos_presidente.append(numero)
+                    break
+                else:
+                    print("Número de candidato inválido. Digite novamente.")
+        #verificação
+        print("Votação concluída com sucesso!")
+        opcao = input("Deseja cadastrar outra votação? (S/N): ")
+        if opcao.lower() == "n":
+            break
+
+    return (
+        total_votos_prefeito,
+        total_votos_validos_prefeito,
+        total_votos_brancos_prefeito,
+        total_votos_nulos_prefeito,
+        total_votos_governador,
+        total_votos_validos_governador,
+        total_votos_brancos_governador,
+        total_votos_nulos_governador,
+        total_votos_presidente,
+        total_votos_validos_presidente,
+        total_votos_brancos_presidente,
+        total_votos_nulos_presidente,
+    )
+
+#apuraração dos resultados
+def apurar_resultados(candidatos_presidente, candidatos_governador, candidatos_prefeito,
+                      votos_por_candidato_prefeito, votos_por_candidato_governador,
+                      votos_por_candidato_presidente, total_votos_prefeito,
+                      total_votos_validos_prefeito, total_votos_brancos_prefeito,
+                      total_votos_nulos_prefeito, total_votos_governador,
+                      total_votos_validos_governador, total_votos_brancos_governador,
+                      total_votos_nulos_governador, total_votos_presidente,
+                      total_votos_validos_presidente, total_votos_brancos_presidente,
+                      total_votos_nulos_presidente):
+    print("----- Resultados da Eleição -----")
+    print()
+    #linha de cima
+    print("{:-^81}".format(""))
+    #ranking presidente
+    print("|                      RANKING DO RESULTADO PARA PRESIDENTE:                    |")
+    print("{:-^81}".format(""))
+    print("|{:<10} | {:<20} | {:<20} | {:<20}|".format("Nome", "Partido", "Total de Votos", "% Votos Válidos"))
+    print("{:-^81}".format(""))
+    for candidato in candidatos_presidente:
+        numero = candidato[1]
+        votos = votos_por_candidato_presidente.get(numero, 0)
+        porcentagem_votos_validos = (votos / len(total_votos_validos_presidente)) * 100
+        print("|{:<10} | {:<20} | {:<20} | {:<20}|".format(candidato[0], candidato[2], votos, int(porcentagem_votos_validos)))
+        print("{:-^81}".format(""))
+    print("| Total de votos", len(total_votos_presidente))
+    porcentagem_total_votos_validos = (len(total_votos_validos_presidente) / len(total_votos_presidente)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_validos_presidente)} ({format(porcentagem_total_votos_validos, '.0f')}%)")
+    porcentagem_total_votos_brancos = (len(total_votos_brancos_presidente) / len(total_votos_presidente)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_brancos_presidente)} ({format(porcentagem_total_votos_brancos, '.0f')}%)")
+    porcentagem_total_votos_nulos = (len(total_votos_nulos_presidente) / len(total_votos_presidente)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_nulos_presidente)} ({format(porcentagem_total_votos_nulos, '.0f')}%)")
+    print("{:-^81}".format(""))
+    print()
+    
+    #ranking governador
+    print("{:-^81}".format(""))
+    print("|                      RANKING DO RESULTADO PARA GOVERNADOR:                    |")
+    print("{:-^81}".format(""))
+    print("|{:<10} | {:<20} | {:<20} | {:<20}|".format("Nome", "Partido", "Total de Votos", "% Votos Válidos"))
+    print("{:-^81}".format(""))
+    for candidato in candidatos_governador:
+        numero = candidato[1]
+        votos = votos_por_candidato_governador.get(numero, 0)
+        porcentagem_votos_validos = (votos / len(total_votos_validos_governador)) * 100
+        print("|{:<10} | {:<20} | {:<20} | {:<20}|".format(candidato[0], candidato[2], votos, int(porcentagem_votos_validos)))
+        print("{:-^81}".format(""))
+    print("| Total de votos", len(total_votos_governador))
+    porcentagem_total_votos_validos = (len(total_votos_validos_governador) / len(total_votos_governador)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_validos_governador)} ({format(porcentagem_total_votos_validos, '.0f')}%)")
+    porcentagem_total_votos_brancos = (len(total_votos_brancos_governador) / len(total_votos_governador)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_brancos_governador)} ({format(porcentagem_total_votos_brancos, '.0f')}%)")
+    porcentagem_total_votos_nulos = (len(total_votos_nulos_governador) / len(total_votos_governador)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_nulos_governador)} ({format(porcentagem_total_votos_nulos, '.0f')}%)")
+    print("{:-^81}".format(""))
+    print()
+    
+    #ranking prefeito
+    print("{:-^81}".format(""))
+    print("|                      RANKING DO RESULTADO PARA PREFEITO:                      |")
+    print("{:-^81}".format(""))
+    print("|{:<10} | {:<20} | {:<20} | {:<20}|".format("Nome", "Partido", "Total de Votos", "% Votos Válidos"))
+    print("{:-^81}".format(""))
+    for candidato in candidatos_prefeito:
+        numero = candidato[1]
+        votos = votos_por_candidato_prefeito.get(numero, 0)
+        porcentagem_votos_validos = (votos / len(total_votos_validos_prefeito)) * 100
+        print("|{:<10} | {:<20} | {:<20} | {:<20}|".format(candidato[0], candidato[2], votos, int(porcentagem_votos_validos)))
+        print("{:-^81}".format(""))
+    print("| Total de votos", len(total_votos_prefeito))
+    porcentagem_total_votos_validos = (len(total_votos_validos_prefeito) / len(total_votos_prefeito)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_validos_prefeito)} ({format(porcentagem_total_votos_validos, '.0f')}%)")
+    porcentagem_total_votos_brancos = (len(total_votos_brancos_prefeito) / len(total_votos_prefeito)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_brancos_prefeito)} ({format(porcentagem_total_votos_brancos, '.0f')}%)")
+    porcentagem_total_votos_nulos = (len(total_votos_nulos_prefeito) / len(total_votos_prefeito)) * 100
+    print(f"| Total de nulos e % = {len(total_votos_nulos_prefeito)} ({format(porcentagem_total_votos_nulos, '.0f')}%)")
+    print("{:-^81}".format(""))
+    print()
+
+#relatorio
+def relatorio_estatisticas(candidatos_presidente, candidatos_governador, candidatos_prefeito,
+                           votos_por_candidato_prefeito, votos_por_candidato_governador,
+                           votos_por_candidato_presidente, total_votos_prefeito,
+                           total_votos_validos_prefeito, total_votos_brancos_prefeito,
+                           total_votos_nulos_prefeito, total_votos_governador,
+                           total_votos_validos_governador, total_votos_brancos_governador,
+                           total_votos_nulos_governador, total_votos_presidente,
+                           total_votos_validos_presidente, total_votos_brancos_presidente,
+                           total_votos_nulos_presidente):
+    #mostra os eleitores que votaram 
+    print("Eleitores que votaram:")
+    for eleitor in eleitores_votaram:
+        print(eleitor["nome"])
+
+    #verificar se o total de eleitores é igual ao numero de votos
+    total_eleitores = len(eleitores)
+    total_votos = len(total_votos_presidente)
+    if total_eleitores == total_votos:
+        print(f"Total de eleitores é igual ao total de votos: Sim ({total_eleitores})")
+    else:
+        print(f"Total de eleitores é igual ao total de votos: Não (Total de eleitores: {total_eleitores}; Total de votos: {total_votos})")
+
+  #calcula o partido com maior e menor quantidade de políticos eleitos
+    politicos_eleitos = candidatos_presidente + candidatos_governador + candidatos_prefeito
+    partido_maior, partido_menor = calcular_partido_elegido(politicos_eleitos)
+
+    print("Partido com maior quantidade de políticos eleitos:", partido_maior)
+    print("Partido com menor quantidade de políticos eleitos:", partido_menor)
+
+#mais e menos politicos por partido
+def calcular_partido_elegido(politicos):
+        partido_contagem = {}
+        for politico in politicos:
+            partido = politico[2]
+            if partido in partido_contagem:
+                partido_contagem[partido] += 1
+            else:
+                partido_contagem[partido] = 1
+        partido_maior = max(partido_contagem, key=partido_contagem.get)
+        partido_menor = min(partido_contagem, key=partido_contagem.get)
+        return partido_maior, partido_menor
+
+#encerra o programa
+def encerrar_programa():
+    print("Encerrando o programa")
+    exit()  
+
+#mostra o menu  
+while True:
+    print("----- Sistema de Urnas -----")
+    print("1. Cadastrar Candidatos")
+    print("2. Cadastrar Eleitores")
+    print("3. Votar")
+    print("4. Apurar Resultados")
+    print("5. Relatório e Estatísticas")
+    print("6. Encerrar")
+
+    #escolha do usuario
+    opcao = input("Digite o número da opção desejada: ")
+    if opcao == "1":
+        candidatos_presidente, candidatos_governador, candidatos_prefeito, votos_por_candidato_prefeito, votos_por_candidato_governador, votos_por_candidato_presidente = cadastrar_candidatos()
+    elif opcao == "2":
+        eleitores = cadastrar_eleitores()
+    elif opcao == "3":
+        total_votos_prefeito, total_votos_validos_prefeito, total_votos_brancos_prefeito, total_votos_nulos_prefeito, total_votos_governador, total_votos_validos_governador, total_votos_brancos_governador, total_votos_nulos_governador, total_votos_presidente, total_votos_validos_presidente, total_votos_brancos_presidente, total_votos_nulos_presidente = votar(candidatos_prefeito, candidatos_governador, candidatos_presidente, votos_por_candidato_prefeito, votos_por_candidato_governador, votos_por_candidato_presidente)
+    elif opcao == "4":
+        apurar_resultados(candidatos_presidente, candidatos_governador, candidatos_prefeito, votos_por_candidato_prefeito, votos_por_candidato_governador, votos_por_candidato_presidente, total_votos_prefeito, total_votos_validos_prefeito, total_votos_brancos_prefeito, total_votos_nulos_prefeito, total_votos_governador, total_votos_validos_governador, total_votos_brancos_governador, total_votos_nulos_governador, total_votos_presidente, total_votos_validos_presidente, total_votos_brancos_presidente, total_votos_nulos_presidente)
+    elif opcao == "5":
+        relatorio_estatisticas(candidatos_presidente, candidatos_governador, candidatos_prefeito,
+                           votos_por_candidato_prefeito, votos_por_candidato_governador,
+                           votos_por_candidato_presidente, total_votos_prefeito,
+                           total_votos_validos_prefeito, total_votos_brancos_prefeito,
+                           total_votos_nulos_prefeito, total_votos_governador,
+                           total_votos_validos_governador, total_votos_brancos_governador,
+                           total_votos_nulos_governador, total_votos_presidente,
+                           total_votos_validos_presidente, total_votos_brancos_presidente,
+                           total_votos_nulos_presidente
+                               )
+    elif opcao == "6":
+        encerrar_programa()
+        break
+    else:
+        print("Opção inválida. Por favor, digite um número válido.")
